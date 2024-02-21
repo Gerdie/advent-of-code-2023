@@ -1,13 +1,13 @@
 maze = []
 start_pos = None
 with open('input.txt') as input_file:
-    for idx, line in enumerate(input_file):
+    for y, line in enumerate(input_file):
         line = line.strip()
         maze.append(line)
         if not start_pos:
-            for idx2, char in enumerate(line):
+            for x, char in enumerate(line):
                 if char == 'S':
-                    start_pos = (idx2, idx)
+                    start_pos = (x, y)
                     break
 
 def get_char(position):
@@ -98,13 +98,38 @@ def next_step(current_pos, last_pos):
 last_pos = None
 next_pos = None
 current_pos = start_pos
-steps = []
+steps = set()
 while True:
-    steps.append(current_pos)
+    steps.add(current_pos)
     next_pos = next_step(current_pos, last_pos)
     if next_pos == start_pos:
         break
     last_pos = current_pos
     current_pos = next_pos
 
-print(len(steps)/2)
+print('Part One: {}'.format(len(steps)/2))
+
+inside_x = set()
+for y, row in enumerate(maze):
+    is_inside_x = False
+    last_char = None
+    for x, item in enumerate(row):
+        coord = (x, y)
+        if coord in steps:
+            char = get_char(coord)
+            if char == '-':
+                continue
+            elif char == '|':
+                is_inside_x = not is_inside_x
+            elif char == 'J' and last_char == 'F':
+                pass
+            elif char == '7' and last_char == 'L':
+                pass
+            else:
+                is_inside_x = not is_inside_x
+            last_char = char
+            continue
+        if is_inside_x:
+            inside_x.add(coord)
+
+print('Part Two: {}'.format(len(inside_x)))
